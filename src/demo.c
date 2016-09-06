@@ -21,7 +21,9 @@ int main(int argc, char *argv[])
 		printf("\r\n");
 		printf("<title>Fast CGI Hello!</title>");
 		printf("<h1>Fast CGI Hello!</h1>");
-		printf("Request number %d running on host <i>%s</i>\n", ++count, getenv("SERVER_NAME"));
+		printf("Request number %d running on host <i>%s</i>\b\r", ++count, getenv("SERVER_NAME"));
+        printf("remote addr : %s: %s\b\r", getenv("REMOTE_ADDR"), getenv("REMOTE_PORT"));
+        printf("client string: %s\b\r", getenv("QUERY_STRING"));
 	}
 	
 	return 0;
