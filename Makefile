@@ -35,9 +35,6 @@ $(demo):demo.o
 
 
 
-
-
-
 .PHONY:clean ALL distclean
 clean:
 	-rm -rf $(dir) $(target)
