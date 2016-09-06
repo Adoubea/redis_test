@@ -13,8 +13,9 @@ dir=$(notdir $(obj))
 test_main=test_main
 example=example
 demo=demo 
+upload=upload
 
-target=$(example) $(test_main) $(demo)
+target=$(example) $(test_main) $(demo) $(upload)
 
 ALL:$(target)
 
@@ -32,6 +33,8 @@ $(test_main):test_main.o make_log.o redis_op.o
 $(demo):demo.o
 	$(CC) $^ -o $@ $(LIBS)
 
+$(upload):upload.o
+	$(CC) $^ -o $@ $(LIBS)
 
 
 
