@@ -21,6 +21,7 @@ static const char rcsid[] = "$Id: echo.c,v 1.5 1999/07/28 00:29:37 roberts Exp $
 #include <string.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include "memstr.h"
 
 #ifdef HAVE_UNISTD_H
 #include <unistd.h>
@@ -84,35 +85,50 @@ int main ()
                 putchar(ch);
             }
             printf("\n</pre><p>\n");
-            printf("len = %d\n", len);
-            int flag = 0;
-            int num = 0;
-            int n = 0;
-            for (i = 0; i < len; i++)
-            {
-                if (buf[i] == '\r')
-                {
-                    flag++;
-                    if (flag == 1)
-                    {
-                        num = i + 4;
-                    }
-                    if (flag == 4)
-                    {
-                        n = i + 2;
-                    }
-                }
-            }
-            int tmplen = len - n - num;
-            char *tmp = (char *)malloc(tmplen);
-            memset(tmp, 0, tmplen);
-            strncpy(tmp, buf+n, tmplen);
-            printf("tmp : %s, tmplen = %d\n", tmp, tmplen);
+            
+            char *str1 = NULL;
+            char *str2 = NULL;
+//            FILE *fd;
+
             int fd;
-            fd = open("buf.txt", O_CREAT | O_RDWR,0644);
-            write(fd, tmp, tmplen);
+            char tmp[256] = {0};
+          
+            
+            
+            
+            str1 = memstr(buf, len, "filename");
+            str2 = memstr(buf, len, "Content-Type");
+            
+            memcpy(tmp, str1+10, str2-str1-13);
+            //strncpy(tmp, str1+10, str2-str1-13);
+//            fd = fopen(tmp, "wb+");
+            fd = open(tmp, O_CREAT | O_RDWR | O_TRUNC, 0644);
+           // printf("tmp = %s\n", tmp);
+            
+            str1 = memstr(buf, len, "Content-Disposition");
+            memset(tmp, 0, 256);
+            //strncpy(tmp, buf, str1-buf-2);
+            memcpy(tmp, buf, str1-buf-2);
+            
+            
+            str1 = memstr(buf, len, "\r\n\r\n");
+            str2 = memstr(str1+4, strlen(str1+4), tmp);
+            
+            int tmplen = str2-str1-4;
+            char *tmpbuf = (char *)malloc(tmplen);
+            
+            memcpy(tmpbuf, str1+4, tmplen);
+            //strncpy(tmpbuf, str1+4, tmplen);
+            //printf("tmpbuf = %s\n", tmpbuf);
+            
+	          printf("tmplen = %d\n", tmplen);
+//            fwrite(tmpbuf, 1, tmplen, fd);
+           write(fd, tmpbuf, tmplen);
+           
+						close(fd);
             free(buf);
-            free(tmp);
+            free(tmpbuf);
+
         }
 
         PrintEnv("Request environment", environ);
