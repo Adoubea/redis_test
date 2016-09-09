@@ -26,7 +26,11 @@
 #fi
     upid=`ps -aux | grep "upload_cgi" | grep -v grep | head -n 1 | awk '{print $2}'`
     kill -9 $upid
-    spawn-fcgi -a 127.0.0.1 -p 8012 -f ./upload_cgi
+    
     sudo /usr/local/nginx/sbin/nginx -s reload
     sudo /usr/bin/fdfs_trackerd ./conf/tracker.conf restart
     sudo /usr/bin/fdfs_storaged ./conf/storage.conf restart
+
+    spawn-fcgi -a 127.0.0.1 -p 8012 -f ./upload_cgi
+    spawn-fcgi -a 127.0.0.1 -p 8013 -f ./data_cgi
+
