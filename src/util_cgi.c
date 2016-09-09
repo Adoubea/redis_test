@@ -1,7 +1,7 @@
 #include "util_cgi.h"
 #include "make_log.h"
 
-char g_host_name[HOST_NAME_LEN] = "http://192.168.2.102";
+char g_host_name[HOST_NAME_LEN] = "http://192.168.181.129";
 
 //find 'substr' from a fixed-length buffer   
 //('full_data' will be treated as binary data buffer)  
