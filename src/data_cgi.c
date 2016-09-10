@@ -24,6 +24,24 @@
 
 extern char g_host_name[HOST_NAME_LEN];
 
+
+void increase_file_pv(char *file_id)
+{
+    redisContext *redis_conn = NULL;
+
+    redis_conn = rop_connectdb_nopwd("127.0.0.1", "6379");
+    if (redis_conn == NULL) {
+        LOG(DATA_LOG_MODULE, DATA_LOG_PROC, "redis connected error");
+        return;
+    }
+
+
+    rop_zset_increment(redis_conn, FILE_HOT_ZSET, file_id);
+
+
+    rop_disconnect(redis_conn);
+}
+
 int get_file_url_dynamic(char *file_id, char *file_url)
 {
     int result;
@@ -214,6 +232,21 @@ int main(int argc, char *argv[])
             printf("\r\n");
 
             print_file_list_json(atoi(fromId), atoi(count), cmd, kind);
+        }
+        else if (strcmp(cmd, "increase") == 0) {
+            //文件被点击
+
+            //得到点击的fileId
+            query_parse_key_value(query, "fileId", fileId, NULL);
+            LOG(DATA_LOG_MODULE, DATA_LOG_PROC, "=== fileId:%s,cmd:%s", fileId,  cmd);
+
+            str_replace(fileId, "%2F", "/");
+
+            increase_file_pv(fileId);
+
+
+            printf("Content-type: text/html\r\n");
+            printf("\r\n");
         }
      }
      
